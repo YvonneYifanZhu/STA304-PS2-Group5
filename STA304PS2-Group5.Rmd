@@ -1,0 +1,196 @@
+---
+title: "life satisfaction"
+author: "Ruoning Guo, Student No. 1004772114"
+date: "10/18/2020"
+output:
+  pdf_document: 
+    latex_engine: xelatex
+  html_document:
+    df_print: paged
+---
+
+```{r , echo=FALSE,results="hide",messange=FALSE,warnings=FALSE,include=FALSE}
+library(readr)
+library(dplyr)
+library(FrF2)
+library(kableExtra)
+library(ggplot2)
+
+
+data <- read_csv("~/Desktop/304ps2data/gss.csv")
+vars <- c("feelings_life","total_children","income_family" )
+newdata <- data[vars] #20602
+newdata <- newdata[!is.na(newdata$feelings_life), ]
+newdata <- newdata[!is.na(newdata$income_family), ]
+
+knitr::opts_chunk$set(echo = FALSE,warning = FALSE, message = FALSE,results = "hide")
+```
+
+```{r,echo=FALSE}
+newdata <- newdata %>%
+  head(newdata, n=1000)
+attach(newdata)
+dim(newdata)
+str(newdata)
+
+Children=array(0,1000)
+for (i in 1:1000)
+{ if (newdata[i,2] > 0)
+{Children[i]=1}
+}
+Children=as.factor(Children)
+
+newdata1 <- cbind(newdata, Children)
+
+attach(newdata1)
+
+library(plyr)
+
+newValueIncome <- c("Less than $25,000"="0-25k","$25,000 to $49,999"="25-50k","$50,000 to $74,999"="50-75k","$75,000 to $99,999"="75-100k","$125,000 and more"="100k+","$100,000 to $ 124,999"="100k+")
+newdata1$income <-  revalue(newdata1$income, newValueIncome)
+
+
+CE <- NULL
+for (i in 1:1000)
+{ if (newdata1$Children[i]==0 & newdata1$income[i]=="0-25k") 
+  {CE[i]="NC0-25k"}
+else if (newdata1$Children[i]==0 & newdata1$income[i]=="25-50k") 
+  {CE[i]="NC25-50k"}
+else if (newdata1$Children[i]==0 & newdata1$income[i]=="50-75k") 
+{CE[i]="NC50-75k"}
+  else if (newdata1$Children[i]==0 & newdata1$income[i]=="75-100k") 
+  {CE[i]="NC75-100k"}
+  else if (newdata1$Children[i]==0 & newdata1$income[i]=="100k+") 
+{CE[i]="NC100k+"}
+else if (newdata1$Children[i]==1 & newdata1$income[i]=="0-25k" )              
+  {CE[i]="C0-25k"}
+  else if (newdata1$Children[i]==1 & newdata1$income[i]=="25-50k" ) 
+  {CE[i]="C25-50k"}
+  else if (newdata1$Children[i]==1 & newdata1$income[i]=="50-75k" ) 
+  {CE[i]="C50-75k"}
+  else if (newdata1$Children[i]==1 & newdata1$income[i]=="75-100k" ) 
+  {CE[i]="C75-100k"}
+else {CE[i]="C100k+"} }
+
+Children=as.factor(Children)
+CE=as.factor(CE)
+
+newdata1 <- newdata1[,-2]
+newdata1 <- newdata1[,-2]
+```
+
+## Data
+In this study, we've created a one-way ANOVA model with three factors - Children, Income, and feeling_life. Children have two levels: the person has children(1) or not(0). Income indicates the annual family income which has five levels: 0-25k, 25-50k, 50-75k, 75-100k, and 100k+. Finally，the feelings_life is the person's feelings of life as a whole on a scale of 1-10. Since the raw dataset was already in a random sequence, there is no need to randomize the sample. So we've selected the first 1000 rows of respondents from the gss2017 dataset. To facilitates the analysis, all rows that include NA in feelings_life and income_family columns have been taking out first. 
+
+```{r,echo=FALSE, results="hide",message=FALSE}
+
+head(newdata1, n=10)
+
+```
+
+## Model
+
+In this study, a one-way analysis of variance(ANOVA) model will be used to investigate whether or not there is a difference in feelings_life among people classified by income and children status. In addition, to investigate whether or not there is a difference in feelings_life among the 10 categories of poeple classified by the combination of their Children status and income. 
+
+$$FeelingsLife = \beta_0+\beta_1Children+\beta_2Income+\beta_3Children*Income+e$$
+
+
+## Results
+
+### Investigate whether or not there is a difference in the feelings_life between children and nonchildren.
+```{r setup, result="hide"}
+attach(newdata1)
+#have children or no children
+children_mean <- tapply(feelings_life,Children,mean)
+
+var.test(feelings_life~Children)
+
+t.test(feelings_life~Children, var.equal=FALSE) #Welch Two Sample t-test
+
+```
+
+
+```{r,echo=FALSE}
+# boxplot results on Income and feelings of life, discuss the relation 
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(plotly)
+
+box <- ggplot(newdata1, aes(x = income_family, y = feelings_life, color = income_family)) +
+  geom_boxplot() + 
+  geom_jitter(aes(color=income_family), size = 0.5) +
+  ggtitle("Feelings of Life for Different Family Income (figure.1)") + 
+  coord_flip() + 
+  theme(legend.position="none")
+ggplotly(box)
+```
+
+
+- By using F-test for variance, we got the p-value=0.04378 therefore we reject H0, that evidence both groups have different variances.Then we need to use Welch's two sample t-test to adjust the number of degrees of freedom when the variances are different. 
+- By using Walch's two-sample t-test, we have t = -1.384, df = 705, p-value = 0.1668. Evidence shows(p=0.17) that people's feelings of life has no difference for people who have children or not. 
+
+
+### Investigate whether or not there is a difference in feelings_life among people classified by income.
+```{r, echo=FALSE, results="hide"}
+
+tapply(feelings_life,income,mean)
+
+anova(lm(feelings_life~income))
+
+TukeyHSD(aov(feelings_life~as.factor(income)))
+
+plot(TukeyHSD(aov(feelings_life~as.factor(income))))
+```
+
+- In order to investigate whether or not there is a difference in feelings_life among people classified by income, we apply one-way analysis of variance. In one-way ANOVA, there are two possible hypotheses.The null hypothesis (H0) is that there is no difference between 5 family income levels and equality between means. The alternative hypothesis (H1) is that there is a difference between the means and levels. 
+- After that we have test statistics(df)=26.295(1,998) and P-value<0.0001.This is a strong evidence shows that the means life satisfaction value different from the 5 levels of income. 
+- In addition, the Tukey’s procedure also indicates the 5 levels are very different. We capture the people with income group below 25k were significantly different(p-value<0.0001) with all other income groups in mean feelings_life.
+```{r, echo=FALSE, results="hide"}
+tapply(feelings_life,CE,mean)
+
+tapply(feelings_life,CE,var)
+
+lm(feelings_life~CE)
+anova(lm(feelings_life~CE))
+
+TukeyHSD(aov(feelings_life~CE))
+
+boxplot(feelings_life~CE, main="Feelings of life by CE",ylab="Feelings of life",xlab="CE",xpd=NA)
+```
+
+
+### Investigate whether or not there is a difference in feelings_life among the 10 categories of family members that classified by the combination of their children status and income.
+
+- By using one-way anova, there is strong evident shows that the not all 10 categories of people have same feelings_life means. Since P<0.0001.
+- However, through observing the Tukey’s output and then comparing the p-values, evidence shows that people who having children with all income 0-25k, 25k-50k, or 100k+ were no different in mean feelings_life to those who without children (p-value=0.998, 0.999, 0.445 respectivly). What's more, non-children people with income below 25k were no different in mean feelings_life to non-children people with income 75-100k and 100k+.(p-value=0.25 and 0.30)
+
+
+## Discussion (Nina)
+From the result section, we drawn conclusion that 
+
+After analyzing the dataset of GSS data, we were able to discover the impact of each different factor in determining “happiness.” We had also found that among the different factors, “” tends to have the greatest happiness with “” and “” support following by. Our hypothesis that a rich life and healthy body are the biggest influencing factors affecting happiness. 
+
+However, the data in our analysis is only 2019, which does not fully explain the factors that affect people's happiness. Our figures will change with immigration and pandemics, or other technological revolutions. We are able to understand what makes countries and their people happy by reviewing these data analysis, thereby enabling us to concentrate on prioritizing and optimizing these facets of the country.
+
+comment on how it relates to the original goal of the study
+
+# Weaknesses (Nina)
+If we used linear regression model to apply and analyze the impact of happiness score from those variables we picked, some response may not fit linear regression assumptions, causing assumption violation.For example, we know that Y variable only takes discrete values from 1-10, Which violates the linearity assumption, because we know the true relationship between our predictors and response is NOT linear. Also, it means that the epsilon will not follow a normal distribution because Y is discrete : Normal can takes all values in R. Thus, we controlled one variable y-feelings_life, and several independent variables (categorical), using ANOVA to analysis these variables.
+
+weaknesses of the study, data, analysis, improvement.
+(sex, omitted variable bias)
+two variables(multico)
+
+# Next Steps (Kyle)
+
+Other than using ANOVA, an alternative option might (or might not) be using "multinomial logistic regression" (Ordinal Logistic Regression)
+
+next steps in terms of statistical analysis (perhaps there is a more efficient algorithm available, or perhaps there is a caveat in the data that would allow for some new technique). 
+study setting (eg. including a follow-up survey on something, or a subsequent study that would complement the conclusions of your report).
+
+
+## References
+
+
+
