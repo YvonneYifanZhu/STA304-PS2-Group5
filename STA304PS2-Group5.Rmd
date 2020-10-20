@@ -1,12 +1,11 @@
 ---
-title: "A statistical study on how Canadian's life satisfaction presents on different family income levels and presence/absence of children"
+title: "A statistical study on how people's life satisfaction presents differently among five family income levels and the presence/absence status of children"
 author: 
 - Ruoning Guo Student No.1004772114 
 - Fanzhen Meng Student No.1002812824 
 - Yifan Zhu Student No.1006345849 
 - Kaiou Guo Student No.1004151865
 date: "10/19/2020"
-Url: https://github.com/YvonneYifanZhu/STA304-PS2-Group5.git
  
 output:
   pdf_document: 
@@ -91,11 +90,11 @@ newdata1 <- newdata1[,-2]
 
 ## Abstract
 
-This paper studied the individual’s life satisfaction score by analyzing the Canadian GSS from 2017. Our results showed that people with lower family income represent significantly different on life satisfaction compared with other income levels, whereas the presence of children does not. By creating a new variable that combines income levels with having/no children status, we discovered that: 1) when people don't have children, the lowest income groups were no differences in mean life satisfaction compared to the highest income group 2) when people having children, the lowest income groups were significantly different in mean satisfaction compare to other high income groups. The study was conducted using a one-way analysis of variance, however, potential alternatives were also discussed.
-  
+This paper studied people’s life satisfaction score by analyzing the Canadian GSS from 2017. Our results showed that people with lower family income represent significantly different on life satisfaction compared with other income levels, whereas the presence of children does not. By creating a new variable that combines income levels with having/no children status, we discovered that: 1) when people don't have children, the lowest income groups were no differences in mean life satisfaction compared to the highest income group 2) when people having children, the lowest income groups were significantly different in mean satisfaction compare to other high income groups. The results may open a door for the discussion of increasingly family pressure in modern society.
+
 ## Introduction
 
-  Life satisfaction at an individual level is extremely important to the well-being of society. In fact, it can be seen as a measurement for human welfare (Haybron, 2011). Empirical evidence suggests that individuals with higher life satisfaction are more productive (Bellet, et al). What’s more, life satisfaction is also linked to better academic performance among students (Antaramian，2017). Therefore, it is important to understand what factors could contribute to a person’s life satisfaction in order to improve society as a whole.
+  Life satisfaction at an individual level is extremely important to the well-being of society. In fact, it can be seen as a measurement for human welfare (Haybron, 2011). Empirical evidence suggests that individuals with higher life satisfaction are more productive (Bellet, et al). What’s more, life satisfaction is also linked to better academic performance among students (Antaramian, 2017). Therefore, it is important to understand what factors could contribute to a person’s life satisfaction in order to improve society as a whole.
   
   This analysis will study how do different variables contribute to an individual’s life satisfaction using the Canadian general social surveys (GSS) from 2017. The GSS recorded 20602 individual-level data regarding each respondent’s gender, income, education, etc (Statistics Canada, 2020). In particular, there is a variable that asks the respondents about their “feelings about life as a whole”, which can be seen as a subjective measurement of the respondents’ level of life satisfaction (Statistics Canada,2020). 
   
@@ -146,7 +145,7 @@ Replace the continuous variable-"total_children" to a binary variable might omit
 
   Linear regression is known as a statistical model that can be used to predict a continuous outcome according to one or more continuous predictor variables. By contrast, the analysis of variance(ANOVA) model is used to predict a continuous outcome according to one or more categorical predictor variables(P.Mean, 2010). If we used a linear regression model to apply and analyze the impact of life satisfaction on the two categorical variables, some responses will not fit linear regression assumptions and cause assumption violation. 
 
-  In our study, a two-sample t.test procedure will firstly be used to investigate whether or not there is a difference in life satisfaction between children status(having children or not). Then the one-way analysis of variance will be used to predict life satisfaction(scale of 1-10) according to the categorical variable -Income with 5 levels. Specifically, it will show the difference between two or more means through significance tests and provides us a way to make multiple comparisons of several groups of means. This is crucially important to our study because to compare the means among different income levels is one of the most important parts of our analysis. In addition, the three assumptions of one-way ANOVA are i)normality ii)homogeneity of variance iii)independence(STAT:5201, University of IOWA). They will be verified in the discussion section. 
+  In our study, a two-sample t.test procedure will firstly be used to investigate whether or not there is a difference in life satisfaction between children status(having children or not). Then the one-way analysis of variance will be used to predict life satisfaction(scale of 1-10) according to the categorical variable -Income with 5 levels. Specifically, it will show the difference between two or more means through significance tests and provides us a way to make multiple comparisons of several groups of means. This is crucially important to our study because to compare the mean life satisfaction among different income levels is one of the most important parts of our analysis. In addition, the three assumptions of one-way ANOVA are i)normality ii)homogeneity of variance iii)independence(STAT:5201, University of IOWA). They will be verified in the discussion section. 
 
   However, ANOVA also has weaknesses. The results from the ANOVA indicated that several groups of means were not equal (p-value < 0.05), but it will not tell which means were different from which other means. Thus we will apply Tukey’s HSD test to make further analysis. Tukey's test reports whether those means for every possible pair of levels are significantly different or not. Using Tukey’s test, we will be able to effectively adjust the p-value of each comparison so that it corrects for multiple comparisons(Meng, 2019).
 
@@ -303,7 +302,9 @@ plot(lm_CE)
 
 Perhaps a bit surprising after discussion, those who have children showed no statistically significant difference in the level of life satisfaction comparing to those who do not have children while controlling for their income. It could be the case that having children will make people happier, however, at the same time, it will also increase the emotional burden (Angeles, 2009). This could explain why having children did not have a statistically significant impact on life satisfaction. However, this could also be the result of not controlling for enough variables, which will be further addressed in the weakness section. 
 
-On average, people with different family income levels showed statistically significant different levels of life satisfaction, while controlling for the presence/absence of children. What's more, a notable finding is that: for people who don't have children, the lower income groups were no differences in mean life satisfaction compared to the high income group. While for people who have children, the lowest income groups were significantly different in mean satisfaction compare to other high income groups. This result is expected, previous empirical research has suggested that richer people are often “happier” people (Ortiz-Ospina, et al,2013). Individuals with higher incomes are not only able to purchase a greater variety and amount of goods and services, but also better able to raise children financially. Income seems an important part leading to higher levels of life satisfaction. 
+On average, people with different family income levels showed statistically significant different levels of life satisfaction, while controlling for the presence/absence of children. What's more, a notable finding is that: for people who don't have children, the lower income groups were no differences in mean life satisfaction compared to the high income group. While for people who have children, the lowest income groups were significantly different in mean satisfaction compare to other high income groups. This result is expected, previous empirical research has suggested that richer people are often “happier” people (Ortiz-Ospina, et al,2013). Individuals with higher incomes are not only able to purchase a greater variety and amount of goods and services, but also better able to raise children financially. 
+
+Although the no-children family with low income were no differences in mean life satisfaction, with the birth of children, higher family income seems to play an important role to break the barrier such that leading to a higher level of life satisfaction.
 
 # Weaknesses
 
